@@ -13,78 +13,54 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <>
-      {/* Mobile hamburger button */}
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 p-2 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-lg lg:hidden shadow-lg shadow-blue-500/30"
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
       {/* Mobile overlay */}
-      {isOpen && (
+      {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 lg:hidden"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/70 z-40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Sidebar with gradient */}
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        style={{
-          background: 'linear-gradient(180deg, #0a0f1c 0%, #1a1f3a 50%, #0f172a 100%)',
-        }}
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-lg lg:hidden"
       >
-        {/* Gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent pointer-events-none" />
-        
-        <div className="relative p-6">
-          {/* Logo area with glow */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              CRM Pro
-            </h2>
-            <div className="h-0.5 w-12 bg-gradient-to-r from-blue-500 to-cyan-400 mt-2 rounded-full" />
-          </div>
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 fixed lg:relative z-40 h-full`}>
+        <div className="p-5">
+          <h1 className="text-xl font-bold text-white mb-8">CRM Pro</h1>
           
-          <nav className="space-y-1">
+          <nav className="flex flex-col gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30'
-                        : 'text-slate-400 hover:bg-blue-900/30 hover:text-blue-300'
+                        ? 'bg-blue-600 text-white'
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                     }`
                   }
                 >
-                  <Icon size={20} className={`transition-transform duration-300 group-hover:scale-110 ${
-                    item.path === window.location.pathname ? 'text-white' : 'text-slate-400 group-hover:text-blue-300'
-                  }`} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={18} />
+                  <span className="font-medium text-sm">{item.label}</span>
                 </NavLink>
               );
             })}
           </nav>
         </div>
-        
-        {/* Bottom gradient glow */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-900/30 to-transparent pointer-events-none" />
       </aside>
     </>
   );
