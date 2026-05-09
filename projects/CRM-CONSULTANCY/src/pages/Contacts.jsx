@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, User } from 'lucide-react';
+import { Search, Plus, User, Trash2, Edit2, X } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import Layout from '../components/Layout/Layout';
 import ContactsTable from '../components/Contacts/ContactsTable';
@@ -7,7 +7,6 @@ import ContactForm from '../components/Contacts/ContactForm';
 import ContactActivityPanel from '../components/Activity/ContactActivityPanel';
 import ActivityForm from '../components/Activity/ActivityForm';
 import Button from '../components/UI/Button';
-import Input from '../components/UI/Input';
 
 export default function Contacts() {
   const { contacts, addContact, updateContact, deleteContact, addContactActivity, updateContactActivity, deleteContactActivity } = useData();
@@ -24,53 +23,50 @@ export default function Contacts() {
   const [editingActivity, setEditingActivity] = useState(null);
   const [activityDeleteConfirm, setActivityDeleteConfirm] = useState(null);
 
-  // Handle add new contact
+  // Stats
+  const totalContacts = contacts.length;
+  const leads = contacts.filter(c => c.status === 'Lead').length;
+  const prospects = contacts.filter(c => c.status === 'Prospect').length;
+  const customers = contacts.filter(c => c.status === 'Customer').length;
+
   const handleAddClick = () => {
     setEditingContact(null);
     setIsModalOpen(true);
   };
 
-  // Handle edit contact
   const handleEditClick = (contact) => {
     setEditingContact(contact);
     setIsModalOpen(true);
   };
 
-  // Handle delete contact
   const handleDeleteClick = (contact) => {
     setDeleteConfirm(contact);
   };
 
-  // Handle contact row click - open activity panel
   const handleContactClick = (contact) => {
     setSelectedContactId(contact.id);
     setIsActivityPanelOpen(true);
   };
 
-  // Handle close activity panel
   const handleCloseActivityPanel = () => {
     setIsActivityPanelOpen(false);
     setSelectedContactId(null);
   };
 
-  // Handle add activity from panel
   const handleAddActivity = () => {
     setEditingActivity(null);
     setIsActivityModalOpen(true);
   };
 
-  // Handle edit activity
   const handleEditActivity = (activity) => {
     setEditingActivity(activity);
     setIsActivityModalOpen(true);
   };
 
-  // Handle delete activity
   const handleDeleteActivity = (activity) => {
     setActivityDeleteConfirm(activity);
   };
 
-  // Confirm activity delete
   const confirmActivityDelete = () => {
     if (activityDeleteConfirm) {
       deleteContactActivity(activityDeleteConfirm.id);
@@ -78,7 +74,6 @@ export default function Contacts() {
     }
   };
 
-  // Handle activity form submit
   const handleActivitySubmit = (formData, activityId) => {
     if (activityId) {
       updateContactActivity(activityId, formData);
@@ -89,7 +84,6 @@ export default function Contacts() {
     setEditingActivity(null);
   };
 
-  // Confirm delete
   const confirmDelete = () => {
     if (deleteConfirm) {
       deleteContact(deleteConfirm.id);
@@ -97,12 +91,6 @@ export default function Contacts() {
     }
   };
 
-  // Cancel delete
-  const cancelDelete = () => {
-    setDeleteConfirm(null);
-  };
-
-  // Handle form submit
   const handleFormSubmit = (formData) => {
     if (editingContact) {
       updateContact(editingContact.id, formData);
@@ -111,7 +99,6 @@ export default function Contacts() {
     }
   };
 
-  // Handle modal close
   const handleModalClose = () => {
     setIsModalOpen(false);
     setEditingContact(null);
@@ -119,37 +106,73 @@ export default function Contacts() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Contacts</h1>
-            <p className="text-slate-600 mt-1">
-              Manage your leads, prospects, and customers
-            </p>
-          </div>
-          <Button onClick={handleAddClick} className="flex items-center gap-2">
-            <Plus size={18} />
-            Add Contact
-          </Button>
+      {/* Page Header */}
+      <div className="page-header" style={{ marginBottom: 'var(--space-6)' }}>
+        <div>
+          <h1 className="page-title">Contacts</h1>
+          <p className="page-subtitle">Manage your leads, prospects, and customers</p>
         </div>
+        <Button variant="primary" onClick={handleAddClick}>
+          <Plus size={16} /> Add Contact
+        </Button>
+      </div>
 
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search 
-            size={18} 
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" 
-          />
+      {/* Stats Cards */}
+      <div className="grid-4" style={{ marginBottom: 'var(--space-6)' }}>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'rgba(45,126,247,0.15)', borderColor: 'rgba(45,126,247,0.3)', color: '#2d7ef7' }}>
+            <User size={18} />
+          </div>
+          <div className="stat-label">Total Contacts</div>
+          <div className="stat-value" style={{ color: '#2d7ef7' }}>{totalContacts}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'rgba(100,116,139,0.15)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>
+            <User size={18} />
+          </div>
+          <div className="stat-label">Leads</div>
+          <div className="stat-value" style={{ color: '#64748b' }}>{leads}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'rgba(45,126,247,0.15)', borderColor: 'rgba(45,126,247,0.3)', color: '#2d7ef7' }}>
+            <User size={18} />
+          </div>
+          <div className="stat-label">Prospects</div>
+          <div className="stat-value" style={{ color: '#2d7ef7' }}>{prospects}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon" style={{ background: 'rgba(16,185,129,0.15)', borderColor: 'rgba(16,185,129,0.3)', color: '#10b981' }}>
+            <User size={18} />
+          </div>
+          <div className="stat-label">Customers</div>
+          <div className="stat-value" style={{ color: '#10b981' }}>{customers}</div>
+        </div>
+      </div>
+
+      {/* Search Card */}
+      <div className="card" style={{ marginBottom: 'var(--space-6)', padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Search size={18} style={{ color: 'var(--text-muted)' }} />
           <input
             type="text"
             placeholder="Search by name, company, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            style={{
+              flex: 1,
+              padding: '10px 0',
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-primary)',
+              fontSize: '14px',
+              outline: 'none',
+            }}
           />
         </div>
+      </div>
 
-        {/* Contacts Table */}
+      {/* Contacts Table Card */}
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <ContactsTable
           contacts={contacts}
           searchQuery={searchQuery}
@@ -169,43 +192,58 @@ export default function Contacts() {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={cancelDelete}
-          />
-          
-          {/* Modal */}
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 z-10 p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <User size={24} className="text-red-600" />
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 500,
+            padding: '16px',
+          }}
+          onClick={cancelDelete}
+        >
+          <div 
+            style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-active)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '400px',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+              <div style={{ 
+                width: '48px', 
+                height: '48px', 
+                borderRadius: '12px', 
+                background: 'var(--red-bg)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(239,68,68,0.3)'
+              }}>
+                <User size={24} style={{ color: 'var(--red)' }} />
               </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-slate-900">
+              <div>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
                   Delete Contact
                 </h3>
-                <p className="text-slate-600 mt-2">
-                  Are you sure you want to delete <strong>{deleteConfirm.name}</strong>? 
-                  This action cannot be undone and will also remove any associated deals and tasks.
+                <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                  Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>{deleteConfirm.name}</strong>?
                 </p>
               </div>
             </div>
-            
-            <div className="flex justify-end gap-3 mt-6">
-              <Button
-                variant="secondary"
-                onClick={cancelDelete}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                onClick={confirmDelete}
-              >
-                Delete Contact
-              </Button>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '20px' }}>
+              This action cannot be undone and will also remove any associated deals and tasks.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <Button variant="ghost" onClick={cancelDelete}>Cancel</Button>
+              <Button variant="danger" onClick={confirmDelete}>Delete Contact</Button>
             </div>
           </div>
         </div>
@@ -235,20 +273,39 @@ export default function Contacts() {
 
       {/* Activity Delete Confirmation */}
       {activityDeleteConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setActivityDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 z-10 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Delete Activity</h3>
-            <p className="text-slate-600">
-              Are you sure you want to delete <strong>&quot;{activityDeleteConfirm.subject}&quot;</strong>?
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 600,
+            padding: '16px',
+          }}
+          onClick={() => setActivityDeleteConfirm(null)}
+        >
+          <div 
+            style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-active)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '400px',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px' }}>
+              Delete Activity
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '20px' }}>
+              Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>"{activityDeleteConfirm.subject}"</strong>?
             </p>
-            <div className="flex justify-end gap-3 mt-6">
-              <Button variant="secondary" onClick={() => setActivityDeleteConfirm(null)}>
-                Cancel
-              </Button>
-              <Button variant="danger" onClick={confirmActivityDelete}>
-                Delete
-              </Button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <Button variant="ghost" onClick={() => setActivityDeleteConfirm(null)}>Cancel</Button>
+              <Button variant="danger" onClick={confirmActivityDelete}>Delete</Button>
             </div>
           </div>
         </div>
