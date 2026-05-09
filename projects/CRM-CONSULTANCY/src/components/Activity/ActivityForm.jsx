@@ -1,16 +1,127 @@
-import { useState } from 'react';
-import { X, Mail, Phone, FileText, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Mail, Phone, FileText, Calendar } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import Modal from '../UI/Modal';
-import Input from '../UI/Input';
 import Button from '../UI/Button';
 
 const activityTypes = [
-  { value: 'email', label: 'Email', icon: Mail, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-  { value: 'call', label: 'Call', icon: Phone, color: 'text-green-600', bgColor: 'bg-green-100' },
-  { value: 'note', label: 'Note', icon: FileText, color: 'text-amber-600', bgColor: 'bg-amber-100' },
-  { value: 'meeting', label: 'Meeting', icon: Calendar, color: 'text-purple-600', bgColor: 'bg-purple-100' },
+  { value: 'email', label: 'Email', icon: Mail, color: '#2d7ef7', bg: 'rgba(45,126,247,0.15)' },
+  { value: 'call', label: 'Call', icon: Phone, color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
+  { value: 'note', label: 'Note', icon: FileText, color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
+  { value: 'meeting', label: 'Meeting', icon: Calendar, color: '#8b5cf6', bg: 'rgba(139,92,246,0.15)' },
 ];
+
+// Form Field Component
+function FormField({ label, required, error, children }) {
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <label style={{ 
+        display: 'block', 
+        fontSize: '11px', 
+        fontWeight: 600, 
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        color: 'var(--text-secondary)',
+        marginBottom: '6px'
+      }}>
+        {label}
+        {required && <span style={{ color: 'var(--red)', marginLeft: '4px' }}>*</span>}
+      </label>
+      {children}
+      {error && (
+        <p style={{ color: 'var(--red)', fontSize: '12px', marginTop: '6px' }}>{error}</p>
+      )}
+    </div>
+  );
+}
+
+// Text Input
+function TextInput({ type = 'text', value, onChange, placeholder, error }) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      style={{
+        width: '100%',
+        padding: '10px 14px',
+        background: 'var(--bg-surface-2)',
+        border: `1px solid ${error ? 'var(--red)' : 'var(--border)'}`,
+        borderRadius: 'var(--radius)',
+        color: 'var(--text-primary)',
+        fontSize: '14px',
+        outline: 'none',
+        transition: 'border-color 0.2s',
+      }}
+      onFocus={(e) => e.target.style.borderColor = 'var(--border-active)'}
+      onBlur={(e) => e.target.style.borderColor = error ? 'var(--red)' : 'var(--border)'}
+    />
+  );
+}
+
+// Textarea
+function Textarea({ value, onChange, placeholder, error, rows = 4 }) {
+  return (
+    <textarea
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      rows={rows}
+      style={{
+        width: '100%',
+        padding: '10px 14px',
+        background: 'var(--bg-surface-2)',
+        border: `1px solid ${error ? 'var(--red)' : 'var(--border)'}`,
+        borderRadius: 'var(--radius)',
+        color: 'var(--text-primary)',
+        fontSize: '14px',
+        outline: 'none',
+        resize: 'vertical',
+        minHeight: '100px',
+        fontFamily: 'inherit',
+        lineHeight: '1.5',
+      }}
+      onFocus={(e) => e.target.style.borderColor = 'var(--border-active)'}
+      onBlur={(e) => e.target.style.borderColor = error ? 'var(--red)' : 'var(--border)'}
+    />
+  );
+}
+
+// Select
+function Select({ value, onChange, options, placeholder, error, disabled }) {
+  return (
+    <select
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      style={{
+        width: '100%',
+        padding: '10px 14px',
+        background: disabled ? 'var(--bg-surface-3)' : 'var(--bg-surface-2)',
+        border: `1px solid ${error ? 'var(--red)' : 'var(--border)'}`,
+        borderRadius: 'var(--radius)',
+        color: 'var(--text-primary)',
+        fontSize: '14px',
+        outline: 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
+        appearance: 'none',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a9cc5' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'right 14px center',
+        paddingRight: '40px',
+      }}
+    >
+      {placeholder && <option value="" style={{ color: 'var(--text-muted)' }}>{placeholder}</option>}
+      {options.map(opt => (
+        <option key={opt.value} value={opt.value} style={{ background: 'var(--bg-surface-2)', color: 'var(--text-primary)' }}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 export default function ActivityForm({ isOpen, onClose, onSubmit, editingActivity = null, preselectedContactId = null }) {
   const { contacts } = useData();
@@ -25,8 +136,7 @@ export default function ActivityForm({ isOpen, onClose, onSubmit, editingActivit
   
   const [errors, setErrors] = useState({});
 
-  // Reset form when modal opens/closes or editingActivity changes
-  useState(() => {
+  useEffect(() => {
     if (isOpen) {
       if (editingActivity) {
         setFormData({
@@ -62,7 +172,6 @@ export default function ActivityForm({ isOpen, onClose, onSubmit, editingActivit
     if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
     if (!formData.body.trim()) newErrors.body = 'Body is required';
     if (!formData.date) newErrors.date = 'Date is required';
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -75,43 +184,26 @@ export default function ActivityForm({ isOpen, onClose, onSubmit, editingActivit
     }
   };
 
-  const selectedType = activityTypes.find(t => t.value === formData.type);
-  const TypeIcon = selectedType?.icon || Mail;
+  const contactOptions = contacts.map(c => ({ value: c.id, label: `${c.name} ${c.company ? `(${c.company})` : ''}` }));
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={editingActivity ? 'Edit Activity' : 'Log Activity'}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Contact Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Contact <span className="text-red-500">*</span>
-          </label>
-          <select
+      <form onSubmit={handleSubmit}>
+        {/* Contact */}
+        <FormField label="Contact" required error={errors.contactId}>
+          <Select
             value={formData.contactId}
             onChange={(e) => handleChange('contactId', e.target.value)}
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.contactId ? 'border-red-500' : 'border-slate-300'
-            }`}
+            options={contactOptions}
+            placeholder="Select a contact..."
+            error={errors.contactId}
             disabled={!!preselectedContactId}
-          >
-            <option value="">Select a contact...</option>
-            {contacts.map(contact => (
-              <option key={contact.id} value={contact.id}>
-                {contact.name} {contact.company ? `(${contact.company})` : ''}
-              </option>
-            ))}
-          </select>
-          {errors.contactId && (
-            <p className="mt-1 text-sm text-red-600">{errors.contactId}</p>
-          )}
-        </div>
+          />
+        </FormField>
 
-        {/* Type Dropdown */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Activity Type <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-4 gap-2">
+        {/* Activity Type */}
+        <FormField label="Activity Type" required>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
             {activityTypes.map((type) => {
               const Icon = type.icon;
               const isSelected = formData.type === type.value;
@@ -120,67 +212,78 @@ export default function ActivityForm({ isOpen, onClose, onSubmit, editingActivit
                   key={type.value}
                   type="button"
                   onClick={() => handleChange('type', type.value)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-lg border transition-all ${
-                    isSelected
-                      ? `border-${type.color.split('-')[1]}-500 ${type.bgColor}`
-                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  }`}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '12px 8px',
+                    borderRadius: 'var(--radius)',
+                    border: `1px solid ${isSelected ? type.color : 'var(--border)'}`,
+                    background: isSelected ? type.bg : 'var(--bg-surface-2)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) e.currentTarget.style.borderColor = 'var(--border-hover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) e.currentTarget.style.borderColor = 'var(--border)';
+                  }}
                 >
-                  <Icon size={20} className={type.color} />
-                  <span className={`text-xs font-medium ${isSelected ? type.color : 'text-slate-600'}`}>
+                  <Icon size={20} style={{ color: type.color }} />
+                  <span style={{ 
+                    fontSize: '11px', 
+                    fontWeight: 600, 
+                    color: isSelected ? type.color : 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.3px'
+                  }}>
                     {type.label}
                   </span>
                 </button>
               );
             })}
           </div>
-        </div>
+        </FormField>
 
-        {/* Subject Input */}
-        <Input
-          label="Subject"
-          value={formData.subject}
-          onChange={(e) => handleChange('subject', e.target.value)}
-          placeholder="Enter activity subject..."
-          error={errors.subject}
-          required
-        />
+        {/* Subject */}
+        <FormField label="Subject" required error={errors.subject}>
+          <TextInput
+            value={formData.subject}
+            onChange={(e) => handleChange('subject', e.target.value)}
+            placeholder="Enter activity subject..."
+            error={errors.subject}
+          />
+        </FormField>
 
-        {/* Body Textarea */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Body <span className="text-red-500">*</span>
-          </label>
-          <textarea
+        {/* Body */}
+        <FormField label="Body" required error={errors.body}>
+          <Textarea
             value={formData.body}
             onChange={(e) => handleChange('body', e.target.value)}
             placeholder="Enter activity details..."
+            error={errors.body}
             rows={4}
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-              errors.body ? 'border-red-500' : 'border-slate-300'
-            }`}
           />
-          {errors.body && (
-            <p className="mt-1 text-sm text-red-600">{errors.body}</p>
-          )}
-        </div>
+        </FormField>
 
-        {/* Date Picker */}
-        <Input
-          label="Date"
-          type="date"
-          value={formData.date}
-          onChange={(e) => handleChange('date', e.target.value)}
-          error={errors.date}
-          required
-        />
+        {/* Date */}
+        <FormField label="Date" required error={errors.date}>
+          <TextInput
+            type="date"
+            value={formData.date}
+            onChange={(e) => handleChange('date', e.target.value)}
+            error={errors.date}
+          />
+        </FormField>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div className="modal-actions" style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
+          <Button type="button" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit">
+          <Button type="submit" variant="primary">
             {editingActivity ? 'Update Activity' : 'Log Activity'}
           </Button>
         </div>
