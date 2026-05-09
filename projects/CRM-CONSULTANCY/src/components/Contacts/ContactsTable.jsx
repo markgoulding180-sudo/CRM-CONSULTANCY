@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search, Pencil, Trash2, User, ChevronUp, ChevronDown } from 'lucide-react';
-import Badge from '../ui/Badge';
-import Button from '../ui/Button';
+import Badge from '../UI/Badge';
+import Button from '../UI/Button';
 
 export default function ContactsTable({ 
   contacts, 

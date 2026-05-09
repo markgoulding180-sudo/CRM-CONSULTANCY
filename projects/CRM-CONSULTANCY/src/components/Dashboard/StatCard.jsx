@@ -1,4 +1,4 @@
-import { Card } from '../ui/Card';
+import Card from '../UI/Card';
 
 export default function StatCard({ icon: Icon, title, value, change, changeType = 'neutral' }) {
   const changeColorClass = {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Modal from '../ui/Modal';
-import Input from '../ui/Input';
-import Button from '../ui/Button';
+import Modal from '../UI/Modal';
+import Input from '../UI/Input';
+import Button from '../UI/Button';
 import { useData } from '../../context/DataContext';
 
 const STAGES = ['Lead', 'Discovery', 'Proposal', 'Negotiation', 'Closed Won'];

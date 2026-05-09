@@ -3,7 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import KanbanBoard from '../components/Deals/KanbanBoard';
 import DealForm from '../components/Deals/DealForm';
-import Button from '../components/ui/Button';
+import Button from '../components/UI/Button';
 import { useData } from '../context/DataContext';
 
 // Format currency for header stats

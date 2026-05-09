@@ -1,5 +1,5 @@
 import { Plus, Users, Briefcase, CheckCircle } from 'lucide-react';
-import { Button } from '../ui/Button';
+import Button from '../UI/Button';
 
 export default function QuickActions({ onAddContact, onAddDeal, onAddTask }) {
   return (
@@ -8,24 +8,24 @@ export default function QuickActions({ onAddContact, onAddDeal, onAddTask }) {
       <div className="space-y-3">
         <Button
           onClick={onAddContact}
-          className="w-full justify-start space-x-2"
-          variant="outline"
+          className="w-full flex items-center justify-center gap-2"
+          variant="secondary"
         >
           <Users className="w-4 h-4" />
           <span>Add Contact</span>
         </Button>
         <Button
           onClick={onAddDeal}
-          className="w-full justify-start space-x-2"
-          variant="outline"
+          className="w-full flex items-center justify-center gap-2"
+          variant="secondary"
         >
           <Briefcase className="w-4 h-4" />
           <span>Add Deal</span>
         </Button>
         <Button
           onClick={onAddTask}
-          className="w-full justify-start space-x-2"
-          variant="outline"
+          className="w-full flex items-center justify-center gap-2"
+          variant="secondary"
         >
           <CheckCircle className="w-4 h-4" />
           <span>Add Task</span>

@@ -4,8 +4,8 @@ import { useData } from '../context/DataContext';
 import Layout from '../components/Layout/Layout';
 import ContactsTable from '../components/Contacts/ContactsTable';
 import ContactForm from '../components/Contacts/ContactForm';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
+import Button from '../components/UI/Button';
+import Input from '../components/UI/Input';
 
 export default function Contacts() {
   const { contacts, addContact, updateContact, deleteContact } = useData();

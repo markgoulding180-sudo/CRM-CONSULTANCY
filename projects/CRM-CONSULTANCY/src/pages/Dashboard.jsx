@@ -5,10 +5,10 @@ import StatCard from '../components/Dashboard/StatCard';
 import ActivityFeed from '../components/Dashboard/ActivityFeed';
 import QuickActions from '../components/Dashboard/QuickActions';
 import { useData } from '../context/DataContext';
-import Modal from '../components/Modal';
-import ContactForm from '../components/ContactForm';
-import DealForm from '../components/DealForm';
-import TaskForm from '../components/TaskForm';
+import Modal from '../components/UI/Modal';
+import ContactForm from '../components/Contacts/ContactForm';
+import DealForm from '../components/Deals/DealForm';
+import TaskForm from '../components/Tasks/TaskForm';
 
 export default function Dashboard() {
   const { contacts, deals, tasks, activities } = useData();
