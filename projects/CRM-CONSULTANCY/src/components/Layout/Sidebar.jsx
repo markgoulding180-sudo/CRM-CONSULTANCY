@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, DollarSign, CheckSquare, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, DollarSign, CheckSquare, Menu, X, Calendar, FileText, Receipt } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/contacts', label: 'Contacts', icon: Users },
   { path: '/deals', label: 'Deals', icon: DollarSign },
   { path: '/tasks', label: 'Tasks', icon: CheckSquare },
+  { path: '/calendar', label: 'Calendar', icon: Calendar },
+  { path: '/activity', label: 'Activity', icon: FileText },
+  { path: '/invoices', label: 'Invoices', icon: Receipt },
 ];
 
 export default function Sidebar() {
@@ -40,9 +43,9 @@ export default function Sidebar() {
         }`}
       >
         <div className="p-6">
-          <h2 className="text-xl font-bold text-white mb-8">CRM</h2>
+          <h2 className="text-xl font-bold text-white mb-8">CRM Pro</h2>
           
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
