@@ -71,13 +71,8 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        </div>
-
-        {/* Stats Grid */}
+      <div className="space-y-6 animate-fade-in">
+        {/* Stats Grid - 5 columns on large screens */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard
             icon={Users}
@@ -108,49 +103,65 @@ export default function Dashboard() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Activity Feed - Takes up 2 columns */}
+          {/* Activity Feed & Meetings - Takes up 2 columns */}
           <div className="lg:col-span-2 space-y-6">
             <ActivityFeed activities={activities} />
             
-            {/* Today's Meetings Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
-              <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+            {/* Today's Meetings Card - Dark themed */}
+            <div 
+              className="rounded-2xl overflow-hidden card-hover animate-card"
+              style={{
+                background: 'linear-gradient(145deg, rgba(30, 58, 95, 0.8) 0%, rgba(30, 64, 175, 0.6) 50%, rgba(30, 58, 138, 0.8) 100%)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <div className="px-6 py-4 border-b border-blue-900/30 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-lg font-semibold text-slate-900">Today's Meetings</h2>
+                  <Calendar className="w-5 h-5 text-blue-300" />
+                  <h2 className="text-lg font-semibold text-white">Today's Meetings</h2>
                 </div>
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-blue-200">
                   {todaysMeetings.length} scheduled
                 </span>
               </div>
               <div className="p-4">
                 {todaysMeetings.length === 0 ? (
                   <div className="text-center py-6">
-                    <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                    <p className="text-slate-500 text-sm">No meetings today</p>
+                    <Calendar className="w-10 h-10 text-blue-400/50 mx-auto mb-2" />
+                    <p className="text-blue-200/70 text-sm">No meetings today</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {todaysMeetings.map(meeting => (
                       <div
                         key={meeting.id}
-                        className="flex items-center gap-4 p-3 rounded-lg bg-slate-50 border border-slate-100"
+                        className="flex items-center gap-4 p-3 rounded-xl"
+                        style={{
+                          background: 'rgba(15, 23, 42, 0.5)',
+                          border: '1px solid rgba(59, 130, 246, 0.2)',
+                        }}
                       >
-                        <div className="flex items-center gap-2 text-slate-600 min-w-[80px]">
-                          <Clock size={16} className="text-slate-400" />
+                        <div className="flex items-center gap-2 text-blue-200 min-w-[80px]">
+                          <Clock size={16} className="text-blue-400" />
                           <span className="text-sm font-medium">
                             {formatTime(meeting.time)}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-slate-900 truncate">
+                          <h3 className="font-medium text-white truncate">
                             {meeting.title}
                           </h3>
-                          <p className="text-sm text-slate-500 truncate">
+                          <p className="text-sm text-blue-200/70 truncate">
                             with {getContactName(meeting.contactId)}
                           </p>
                         </div>
-                        <span className="text-xs text-slate-400 bg-slate-200 px-2 py-1 rounded">
+                        <span 
+                          className="text-xs text-blue-200 px-2 py-1 rounded-lg"
+                          style={{
+                            background: 'rgba(59, 130, 246, 0.2)',
+                          }}
+                        >
                           {meeting.duration}m
                         </span>
                       </div>
