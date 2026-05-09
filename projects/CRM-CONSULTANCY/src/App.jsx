@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Contacts from './pages/Contacts';
+import Deals from './pages/Deals';
 
 // Placeholder pages
 function Dashboard() {
@@ -8,15 +9,6 @@ function Dashboard() {
     <div>
       <h2 className="text-2xl font-bold text-slate-900 mb-4">Dashboard</h2>
       <p className="text-slate-600">Welcome to your CRM dashboard.</p>
-    </div>
-  );
-}
-
-function Deals() {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-4">Deals</h2>
-      <p className="text-slate-600">Track your deals and opportunities.</p>
     </div>
   );
 }
