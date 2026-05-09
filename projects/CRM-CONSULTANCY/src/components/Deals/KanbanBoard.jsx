@@ -23,7 +23,6 @@ export default function KanbanBoard({ onEditDeal }) {
   const { deals, moveDealStage } = useData();
   const [activeDeal, setActiveDeal] = useState(null);
 
-  // Group deals by stage
   const dealsByStage = useMemo(() => {
     const grouped = {};
     STAGES.forEach(stage => {
@@ -32,46 +31,26 @@ export default function KanbanBoard({ onEditDeal }) {
     return grouped;
   }, [deals]);
 
-  // Sensors for drag detection
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8, // Minimum drag distance before activating
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   const handleDragStart = (event) => {
-    const { active } = event;
-    const deal = deals.find(d => d.id === active.id);
-    if (deal) {
-      setActiveDeal(deal);
-    }
+    const deal = deals.find(d => d.id === event.active.id);
+    if (deal) setActiveDeal(deal);
   };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
     setActiveDeal(null);
-
     if (!over) return;
-
-    const dealId = active.id;
-    const overId = over.id;
-
-    // Check if dropped over a stage column
-    if (STAGES.includes(overId)) {
-      const deal = deals.find(d => d.id === dealId);
-      if (deal && deal.stage !== overId) {
-        moveDealStage(dealId, overId);
+    if (STAGES.includes(over.id)) {
+      const deal = deals.find(d => d.id === active.id);
+      if (deal && deal.stage !== over.id) {
+        moveDealStage(active.id, over.id);
       }
     }
-  };
-
-  const handleDragCancel = () => {
-    setActiveDeal(null);
   };
 
   return (
@@ -80,32 +59,23 @@ export default function KanbanBoard({ onEditDeal }) {
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
+      onDragCancel={() => setActiveDeal(null)}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[500px] justify-between">
+      <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', minHeight: '450px', paddingBottom: '8px' }}>
         {STAGES.map(stage => (
           <SortableContext
             key={stage}
             items={dealsByStage[stage].map(d => d.id)}
             strategy={verticalListSortingStrategy}
           >
-            <KanbanColumn
-              stage={stage}
-              deals={dealsByStage[stage]}
-              onDrop={onEditDeal}
-            />
+            <KanbanColumn stage={stage} deals={dealsByStage[stage]} onDrop={onEditDeal} />
           </SortableContext>
         ))}
       </div>
-
-      {/* Drag Overlay - shows the card being dragged */}
       <DragOverlay>
         {activeDeal ? (
-          <div className="opacity-90 rotate-2">
-            <DealCard
-              deal={activeDeal}
-              onClick={() => {}}
-            />
+          <div style={{ transform: 'rotate(2deg)', opacity: 0.9 }}>
+            <DealCard deal={activeDeal} onClick={() => {}} />
           </div>
         ) : null}
       </DragOverlay>

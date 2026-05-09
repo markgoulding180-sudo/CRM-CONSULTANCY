@@ -3,24 +3,14 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { DollarSign, Calendar, Percent, GripVertical } from 'lucide-react';
 
-// Stage color mapping for dark theme
-const stageColors = {
-  'Lead': 'from-slate-800/80 to-slate-900/80 border-slate-700/50',
-  'Discovery': 'from-blue-900/60 to-blue-950/80 border-blue-700/50',
-  'Proposal': 'from-amber-900/60 to-amber-950/80 border-amber-700/50',
-  'Negotiation': 'from-purple-900/60 to-purple-950/80 border-purple-700/50',
-  'Closed Won': 'from-emerald-900/60 to-emerald-950/80 border-emerald-700/50'
+const STAGE_COLORS = {
+  'Lead': { bg: 'rgba(51, 65, 85, 0.3)', header: '#334155', border: 'rgba(51, 65, 85, 0.5)' },
+  'Discovery': { bg: 'rgba(30, 58, 138, 0.3)', header: '#1e40af', border: 'rgba(45, 126, 247, 0.4)' },
+  'Proposal': { bg: 'rgba(146, 64, 14, 0.3)', header: '#b45309', border: 'rgba(245, 158, 11, 0.4)' },
+  'Negotiation': { bg: 'rgba(107, 33, 168, 0.3)', header: '#7c3aed', border: 'rgba(139, 92, 246, 0.4)' },
+  'Closed Won': { bg: 'rgba(6, 78, 59, 0.3)', header: '#059669', border: 'rgba(16, 185, 129, 0.4)' },
 };
 
-const stageHeaderColors = {
-  'Lead': 'from-slate-700 to-slate-800',
-  'Discovery': 'from-blue-600 to-blue-700',
-  'Proposal': 'from-amber-600 to-amber-700',
-  'Negotiation': 'from-purple-600 to-purple-700',
-  'Closed Won': 'from-emerald-600 to-emerald-700'
-};
-
-// Format currency
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
@@ -30,40 +20,30 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 
-// Format date
 const formatDate = (dateString) => {
   if (!dateString) return 'No date';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  });
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-// Get probability color
 const getProbabilityColor = (probability) => {
-  if (probability >= 80) return 'bg-emerald-500';
-  if (probability >= 60) return 'bg-blue-500';
-  if (probability >= 40) return 'bg-amber-500';
-  return 'bg-slate-500';
+  if (probability >= 80) return '#10b981';
+  if (probability >= 60) return '#2d7ef7';
+  if (probability >= 40) return '#f59e0b';
+  return '#64748b';
 };
 
 // Deal Card Component
 function DealCard({ deal, onClick }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: deal.id, data: { deal } });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: deal.id,
+    data: { deal }
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -71,56 +51,77 @@ function DealCard({ deal, onClick }) {
       ref={setNodeRef}
       style={style}
       onClick={onClick}
-      className="rounded-xl p-4 mb-3 cursor-pointer card-hover group animate-fade-in"
+      className="card"
       style={{
-        background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%)',
-        border: '1px solid rgba(59, 130, 246, 0.2)',
-        backdropFilter: 'blur(10px)',
+        ...style,
+        padding: '16px',
+        marginBottom: '12px',
+        cursor: 'pointer',
+        background: 'var(--bg-surface-2)',
+        borderColor: 'var(--border)',
       }}
     >
-      {/* Drag handle and title */}
-      <div className="flex items-start gap-2 mb-3">
+      {/* Header with drag handle */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
         <button
           {...attributes}
           {...listeners}
-          className="p-1 text-slate-500 hover:text-blue-400 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-all"
           onClick={(e) => e.stopPropagation()}
+          style={{ 
+            padding: '4px', 
+            color: 'var(--text-muted)', 
+            cursor: 'grab',
+            background: 'none',
+            border: 'none',
+            marginTop: '-4px',
+            marginLeft: '-4px'
+          }}
         >
           <GripVertical size={16} />
         </button>
-        <h4 className="font-semibold text-white text-sm leading-tight flex-1">
+        <h4 style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: 600, flex: 1, lineHeight: 1.4 }}>
           {deal.name}
         </h4>
       </div>
 
       {/* Company */}
-      <p className="text-xs text-slate-400 mb-3 ml-6">{deal.company}</p>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '12px', paddingLeft: '20px' }}>
+        {deal.company}
+      </p>
 
-      {/* Deal details */}
-      <div className="space-y-2 ml-6">
+      {/* Details */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '20px' }}>
         {/* Value */}
-        <div className="flex items-center gap-2 text-sm">
-          <DollarSign size={14} className="text-blue-400" />
-          <span className="font-medium text-blue-200">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <DollarSign size={14} style={{ color: 'var(--accent)' }} />
+          <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 500 }}>
             {formatCurrency(deal.value)}
           </span>
         </div>
 
         {/* Close date */}
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar size={14} className="text-slate-400" />
-          <span className="text-slate-300">{formatDate(deal.closeDate)}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Calendar size={14} style={{ color: 'var(--text-muted)' }} />
+          <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+            {formatDate(deal.closeDate)}
+          </span>
         </div>
 
-        {/* Probability with visual indicator */}
-        <div className="flex items-center gap-2 text-sm">
-          <Percent size={14} className="text-slate-400" />
-          <div className="flex items-center gap-2 flex-1">
-            <span className="text-slate-300 text-xs">{deal.probability}%</span>
-            <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+        {/* Probability */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Percent size={14} style={{ color: 'var(--text-muted)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '12px', minWidth: '30px' }}>
+              {deal.probability}%
+            </span>
+            <div style={{ flex: 1, height: '4px', background: 'var(--bg-surface-3)', borderRadius: '2px', overflow: 'hidden' }}>
               <div
-                className={`h-full rounded-full ${getProbabilityColor(deal.probability)}`}
-                style={{ width: `${deal.probability}%` }}
+                style={{
+                  height: '100%',
+                  width: `${deal.probability}%`,
+                  background: getProbabilityColor(deal.probability),
+                  borderRadius: '2px',
+                }}
               />
             </div>
           </div>
@@ -132,59 +133,80 @@ function DealCard({ deal, onClick }) {
 
 // Kanban Column Component
 export default function KanbanColumn({ stage, deals, onDrop }) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: stage,
-    data: { stage }
-  });
-
-  // Calculate total value
+  const { setNodeRef, isOver } = useDroppable({ id: stage, data: { stage } });
+  const colors = STAGE_COLORS[stage] || STAGE_COLORS['Lead'];
   const totalValue = deals.reduce((sum, deal) => sum + (deal.value || 0), 0);
 
   return (
     <div
       ref={setNodeRef}
-      className={`flex-1 min-w-[280px] max-w-[320px] flex flex-col rounded-2xl border transition-all duration-300 ${
-        isOver ? 'border-blue-400 ring-2 ring-blue-500/50 scale-[1.02]' : 'border-slate-700/50'
-      }`}
       style={{
-        background: `linear-gradient(180deg, ${stageHeaderColors[stage].includes('blue') ? 'rgba(30, 58, 138, 0.3)' : stageHeaderColors[stage].includes('amber') ? 'rgba(146, 64, 14, 0.3)' : stageHeaderColors[stage].includes('purple') ? 'rgba(107, 33, 168, 0.3)' : stageHeaderColors[stage].includes('emerald') ? 'rgba(6, 78, 59, 0.3)' : 'rgba(51, 65, 85, 0.3)'} 0%, rgba(15, 23, 42, 0.5) 100%)`,
+        width: '280px',
+        minWidth: '280px',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: '14px',
+        background: colors.bg,
+        border: `1px solid ${isOver ? 'var(--accent)' : colors.border}`,
+        transition: 'border-color 0.2s',
       }}
     >
       {/* Column Header */}
-      <div 
-        className={`px-4 py-3 rounded-t-2xl bg-gradient-to-r ${stageHeaderColors[stage]}`}
+      <div
+        style={{
+          padding: '16px',
+          borderRadius: '14px 14px 0 0',
+          background: colors.header,
+          borderBottom: `1px solid ${colors.border}`,
+        }}
       >
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-white">{stage}</h3>
-          <span 
-            className="text-xs font-medium px-2.5 py-1 rounded-full"
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+          <h3 style={{ color: '#fff', fontSize: '14px', fontWeight: 600 }}>{stage}</h3>
+          <span
             style={{
-              background: 'rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(10px)',
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '2px 10px',
+              borderRadius: '12px',
+              background: 'rgba(255,255,255,0.2)',
+              color: '#fff',
             }}
           >
             {deals.length}
           </span>
         </div>
-        <div className="mt-1 text-sm font-medium text-white/80">
+        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 500 }}>
           {formatCurrency(totalValue)}
         </div>
       </div>
 
       {/* Deals List */}
-      <div className="flex-1 p-3 min-h-[200px] overflow-y-auto max-h-[calc(100vh-320px)]">
+      <div
+        style={{
+          flex: 1,
+          padding: '12px',
+          minHeight: '100px',
+          maxHeight: 'calc(100vh - 400px)',
+          overflowY: 'auto',
+        }}
+      >
         {deals.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-slate-500 text-sm">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '80px',
+              color: 'var(--text-muted)',
+              fontSize: '13px',
+              border: '2px dashed var(--border)',
+              borderRadius: '10px',
+            }}
+          >
             Drop deals here
           </div>
         ) : (
-          deals.map((deal) => (
-            <DealCard
-              key={deal.id}
-              deal={deal}
-              onClick={() => onDrop(deal)}
-            />
-          ))
+          deals.map((deal) => <DealCard key={deal.id} deal={deal} onClick={() => onDrop(deal)} />)
         )}
       </div>
     </div>
