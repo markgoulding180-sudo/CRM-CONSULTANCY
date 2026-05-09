@@ -4,16 +4,25 @@ import { useData } from '../context/DataContext';
 import Layout from '../components/Layout/Layout';
 import ContactsTable from '../components/Contacts/ContactsTable';
 import ContactForm from '../components/Contacts/ContactForm';
+import ContactActivityPanel from '../components/Activity/ContactActivityPanel';
+import ActivityForm from '../components/Activity/ActivityForm';
 import Button from '../components/UI/Button';
 import Input from '../components/UI/Input';
 
 export default function Contacts() {
-  const { contacts, addContact, updateContact, deleteContact } = useData();
+  const { contacts, addContact, updateContact, deleteContact, addContactActivity, updateContactActivity, deleteContactActivity } = useData();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  
+  // Activity panel state
+  const [selectedContactId, setSelectedContactId] = useState(null);
+  const [isActivityPanelOpen, setIsActivityPanelOpen] = useState(false);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [activityDeleteConfirm, setActivityDeleteConfirm] = useState(null);
 
   // Handle add new contact
   const handleAddClick = () => {
@@ -30,6 +39,54 @@ export default function Contacts() {
   // Handle delete contact
   const handleDeleteClick = (contact) => {
     setDeleteConfirm(contact);
+  };
+
+  // Handle contact row click - open activity panel
+  const handleContactClick = (contact) => {
+    setSelectedContactId(contact.id);
+    setIsActivityPanelOpen(true);
+  };
+
+  // Handle close activity panel
+  const handleCloseActivityPanel = () => {
+    setIsActivityPanelOpen(false);
+    setSelectedContactId(null);
+  };
+
+  // Handle add activity from panel
+  const handleAddActivity = () => {
+    setEditingActivity(null);
+    setIsActivityModalOpen(true);
+  };
+
+  // Handle edit activity
+  const handleEditActivity = (activity) => {
+    setEditingActivity(activity);
+    setIsActivityModalOpen(true);
+  };
+
+  // Handle delete activity
+  const handleDeleteActivity = (activity) => {
+    setActivityDeleteConfirm(activity);
+  };
+
+  // Confirm activity delete
+  const confirmActivityDelete = () => {
+    if (activityDeleteConfirm) {
+      deleteContactActivity(activityDeleteConfirm.id);
+      setActivityDeleteConfirm(null);
+    }
+  };
+
+  // Handle activity form submit
+  const handleActivitySubmit = (formData, activityId) => {
+    if (activityId) {
+      updateContactActivity(activityId, formData);
+    } else {
+      addContactActivity({ ...formData, contactId: selectedContactId });
+    }
+    setIsActivityModalOpen(false);
+    setEditingActivity(null);
   };
 
   // Confirm delete
@@ -98,6 +155,7 @@ export default function Contacts() {
           searchQuery={searchQuery}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}
+          onRowClick={handleContactClick}
         />
       </div>
 
@@ -147,6 +205,49 @@ export default function Contacts() {
                 onClick={confirmDelete}
               >
                 Delete Contact
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Activity Side Panel */}
+      <ContactActivityPanel
+        contactId={selectedContactId}
+        isOpen={isActivityPanelOpen}
+        onClose={handleCloseActivityPanel}
+        onAddActivity={handleAddActivity}
+        onEditActivity={handleEditActivity}
+        onDeleteActivity={handleDeleteActivity}
+      />
+
+      {/* Activity Form Modal */}
+      <ActivityForm
+        isOpen={isActivityModalOpen}
+        onClose={() => {
+          setIsActivityModalOpen(false);
+          setEditingActivity(null);
+        }}
+        onSubmit={handleActivitySubmit}
+        editingActivity={editingActivity}
+        preselectedContactId={selectedContactId}
+      />
+
+      {/* Activity Delete Confirmation */}
+      {activityDeleteConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setActivityDeleteConfirm(null)} />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 z-10 p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Delete Activity</h3>
+            <p className="text-slate-600">
+              Are you sure you want to delete <strong>&quot;{activityDeleteConfirm.subject}&quot;</strong>?
+            </p>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="secondary" onClick={() => setActivityDeleteConfirm(null)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={confirmActivityDelete}>
+                Delete
               </Button>
             </div>
           </div>

@@ -7,7 +7,8 @@ export default function ContactsTable({
   contacts, 
   searchQuery, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onRowClick
 }) {
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -158,7 +159,8 @@ export default function ContactsTable({
             {sortedContacts.map((contact) => (
               <tr 
                 key={contact.id}
-                className="hover:bg-slate-50 transition-colors"
+                className={`hover:bg-slate-50 transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                onClick={() => onRowClick && onRowClick(contact)}
               >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -192,14 +194,20 @@ export default function ContactsTable({
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2">
                     <button
-                      onClick={() => onEdit(contact)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(contact);
+                      }}
                       className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Edit contact"
                     >
                       <Pencil size={16} />
                     </button>
                     <button
-                      onClick={() => onDelete(contact)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(contact);
+                      }}
                       className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Delete contact"
                     >
