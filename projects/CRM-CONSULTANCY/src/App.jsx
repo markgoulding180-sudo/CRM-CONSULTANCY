@@ -1,36 +1,56 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+
+// Placeholder pages
+function Dashboard() {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-4">Dashboard</h2>
+      <p className="text-slate-600">Welcome to your CRM dashboard.</p>
+    </div>
+  );
+}
+
+function Contacts() {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-4">Contacts</h2>
+      <p className="text-slate-600">Manage your contacts here.</p>
+    </div>
+  );
+}
+
+function Deals() {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-4">Deals</h2>
+      <p className="text-slate-600">Track your deals and opportunities.</p>
+    </div>
+  );
+}
+
+function Tasks() {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-slate-900 mb-4">Tasks</h2>
+      <p className="text-slate-600">Manage your tasks and to-dos.</p>
+    </div>
+  );
+}
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">CRM Consultancy</h1>
-        </div>
-      </header>
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Welcome to your CRM
-          </h2>
-          <p className="text-gray-600 mb-4">
-            This is the starting point for your CRM Consultancy application.
-          </p>
-          <button
-            type="button"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            Count is {count}
-          </button>
-        </div>
-      </main>
-    </div>
-  )
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/deals" element={<Deals />} />
+          <Route path="/tasks" element={<Tasks />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
 }
 
 export default App
