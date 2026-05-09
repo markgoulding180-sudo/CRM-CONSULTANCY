@@ -8,15 +8,15 @@ export default function StatCard({ icon: Icon, title, value, change, changeType 
   }[changeType];
 
   return (
-    <Card className="flex items-start space-x-4">
-      <div className="p-3 bg-blue-50 rounded-lg">
+    <Card className="flex items-center gap-4">
+      <div className="p-3 bg-blue-50 rounded-lg flex-shrink-0">
         <Icon className="w-6 h-6 text-blue-600" />
       </div>
-      <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-600 truncate">{title}</p>
+        <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
         {change && (
-          <p className={`text-sm mt-1 ${changeColorClass}`}>
+          <p className={`text-sm mt-0.5 ${changeColorClass}`}>
             {change}
           </p>
         )}

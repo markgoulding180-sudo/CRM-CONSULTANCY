@@ -138,7 +138,7 @@ export default function KanbanColumn({ stage, deals, onDrop }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex-shrink-0 w-80 flex flex-col rounded-xl border-2 transition-colors ${
+      className={`flex-1 min-w-[260px] max-w-[350px] flex flex-col rounded-xl border-2 transition-colors ${
         stageColors[stage]
       } ${isOver ? 'border-blue-400 ring-2 ring-blue-200' : ''}`}
     >
@@ -156,7 +156,7 @@ export default function KanbanColumn({ stage, deals, onDrop }) {
       </div>
 
       {/* Deals List */}
-      <div className="flex-1 p-3 min-h-[200px] overflow-y-auto">
+      <div className="flex-1 p-3 min-h-[200px] overflow-y-auto max-h-[calc(100vh-280px)]">
         {deals.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-slate-400 text-sm">
             Drop deals here

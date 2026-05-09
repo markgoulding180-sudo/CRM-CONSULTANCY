@@ -82,7 +82,7 @@ export default function KanbanBoard({ onEditDeal }) {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[500px]">
+      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[500px] justify-between">
         {STAGES.map(stage => (
           <SortableContext
             key={stage}
