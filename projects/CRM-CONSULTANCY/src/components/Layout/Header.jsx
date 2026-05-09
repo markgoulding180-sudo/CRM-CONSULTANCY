@@ -1,22 +1,36 @@
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, Menu } from 'lucide-react';
 
-export default function Header() {
+export default function Header({ setMobileOpen }) {
   return (
-    <header className="top-bar">
-      <div className="flex items-center gap-3 flex-1 max-w-xl">
-        <Search className="text-slate-400" size={18} />
-        <input
-          type="text"
-          placeholder="Search..."
-          className="flex-1 bg-transparent border-none outline-none text-white placeholder-slate-500 text-sm"
-        />
+    <header className="topbar">
+      <button 
+        className="btn btn-ghost lg:hidden"
+        onClick={() => setMobileOpen(true)}
+        style={{ padding: '8px', height: 'auto' }}
+      >
+        <Menu size={20} />
+      </button>
+
+      <div className="topbar-search">
+        <Search size={16} />
+        <input type="text" placeholder="Search contacts, deals..." />
       </div>
-      
-      <div className="flex items-center gap-3">
-        <button className="p-2 text-slate-400 hover:text-white transition-colors">
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button className="btn btn-ghost" style={{ padding: '8px', height: 'auto' }}>
           <Bell size={20} />
         </button>
-        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-sm font-medium text-white">
+        <div style={{ 
+          width: '36px', 
+          height: '36px', 
+          borderRadius: '10px', 
+          background: 'var(--accent)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 600,
+          fontSize: '13px'
+        }}>
           MG
         </div>
       </div>

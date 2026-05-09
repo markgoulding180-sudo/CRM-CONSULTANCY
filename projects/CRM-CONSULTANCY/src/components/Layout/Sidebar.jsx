@@ -1,6 +1,8 @@
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, DollarSign, CheckSquare, Menu, X, Calendar, FileText, Receipt } from 'lucide-react';
+import { 
+  LayoutDashboard, Users, DollarSign, CheckSquare, 
+  Calendar, FileText, Receipt, ChevronLeft, ChevronRight 
+} from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -12,55 +14,43 @@ const navItems = [
   { path: '/invoices', label: 'Invoices', icon: Receipt },
 ];
 
-export default function Sidebar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
+export default function Sidebar({ collapsed, toggleSidebar, mobileOpen, setMobileOpen }) {
   return (
     <>
-      {/* Mobile overlay */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 z-40 lg:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-
-      {/* Mobile hamburger */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-lg lg:hidden"
-      >
-        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
+      {/* Mobile Overlay */}
+      <div 
+        className={`sidebar-overlay ${mobileOpen ? 'open' : ''}`}
+        onClick={() => setMobileOpen(false)}
+      />
 
       {/* Sidebar */}
-      <aside className={`sidebar ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 fixed lg:relative z-40 h-full`}>
-        <div className="p-5">
-          <h1 className="text-xl font-bold text-white mb-8">CRM Pro</h1>
-          
-          <nav className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-blue-600 text-white'
-                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                    }`
-                  }
-                >
-                  <Icon size={18} />
-                  <span className="font-medium text-sm">{item.label}</span>
-                </NavLink>
-              );
-            })}
-          </nav>
+      <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
+        {/* Logo */}
+        <div className="sidebar-logo">
+          <div className="logo-icon">C</div>
+          <span className="logo-text">CRM Pro</span>
         </div>
+
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: '8px 0' }}>
+          <div className="nav-section-label">Main</div>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <item.icon size={18} />
+              <span className="nav-label">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Toggle */}
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {collapsed ? <ChevronRight size={18} /> : <><ChevronLeft size={18} /> Collapse</>}
+        </button>
       </aside>
     </>
   );

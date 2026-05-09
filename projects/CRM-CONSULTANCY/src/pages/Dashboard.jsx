@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Briefcase, PoundSterling, CheckCircle, FileText, Clock, Calendar } from 'lucide-react';
+import { Users, Briefcase, PoundSterling, CheckCircle, Clock, Calendar, Plus } from 'lucide-react';
 import Layout from '../components/Layout/Layout';
 import { useData } from '../context/DataContext';
 import Modal from '../components/UI/Modal';
@@ -7,64 +7,56 @@ import ContactForm from '../components/Contacts/ContactForm';
 import DealForm from '../components/Deals/DealForm';
 import TaskForm from '../components/Tasks/TaskForm';
 
-// Stat Card Component - follows .card exactly
-function StatCard({ icon: Icon, label, value }) {
+// Stat Card
+function StatCard({ icon: Icon, label, value, subtext }) {
   return (
-    <div className="card flex items-center gap-4">
-      <div className="w-12 h-12 rounded-lg bg-blue-600/20 flex items-center justify-center flex-shrink-0">
-        <Icon className="text-blue-400" size={24} />
+    <div className="stat-card">
+      <div className="stat-icon">
+        <Icon size={18} />
       </div>
-      <div className="min-w-0">
-        <p className="text-slate-400 text-sm">{label}</p>
-        <p className="text-white text-2xl font-bold truncate">{value}</p>
-      </div>
+      <div className="stat-label">{label}</div>
+      <div className="stat-value">{value}</div>
+      {subtext && <div className="stat-sub">{subtext}</div>}
     </div>
   );
 }
 
-// Activity Item Component
-function ActivityItem({ icon: Icon, text, time }) {
+// Activity Item
+function ActivityItem({ text, time }) {
   return (
-    <div className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">
-      <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0">
-        <Icon className="text-slate-400" size={16} />
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ 
+        width: '32px', 
+        height: '32px', 
+        borderRadius: '8px', 
+        background: 'var(--bg-surface-2)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0
+      }}>
+        <Clock size={14} style={{ color: 'var(--text-secondary)' }} />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-white text-sm">{text}</p>
-        <p className="text-slate-500 text-xs mt-1">{time}</p>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ color: 'var(--text-primary)', fontSize: '13px', marginBottom: '4px' }}>{text}</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '11px' }}>{time}</p>
       </div>
     </div>
-  );
-}
-
-// Quick Action Button
-function ActionButton({ icon: Icon, label, onClick }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-700 hover:bg-slate-600 transition-colors text-left"
-    >
-      <Icon className="text-blue-400" size={20} />
-      <span className="text-white font-medium">{label}</span>
-    </button>
   );
 }
 
 export default function Dashboard() {
-  const { contacts, deals, tasks, activities, meetings, invoices } = useData();
+  const { contacts, deals, tasks, activities, meetings } = useData();
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDealModal, setShowDealModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
 
-  // Stats calculations
+  // Stats
   const totalContacts = contacts.length;
   const openDeals = deals.filter(d => d.stage !== 'Closed Won').length;
   const pipelineValue = deals
     .filter(d => d.stage !== 'Closed Won')
     .reduce((sum, d) => sum + (parseFloat(d.value) || 0), 0);
-  const outstandingInvoices = invoices
-    .filter(inv => inv.status === 'sent' || inv.status === 'overdue')
-    .reduce((sum, inv) => sum + (inv.total || 0), 0);
   const today = new Date().toISOString().split('T')[0];
   const tasksDue = tasks.filter(t => !t.done && t.dueDate && t.dueDate <= today).length;
 
@@ -88,28 +80,26 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      {/* Stats Grid - 4 columns */}
-      <div className="stats-grid">
-        <StatCard icon={Users} label="Contacts" value={totalContacts} />
+      {/* Stats Grid */}
+      <div className="grid-4">
+        <StatCard icon={Users} label="Total Contacts" value={totalContacts} />
         <StatCard icon={Briefcase} label="Open Deals" value={openDeals} />
-        <StatCard icon={PoundSterling} label="Pipeline" value={formatCurrency(pipelineValue)} />
-        <StatCard icon={CheckCircle} label="Tasks Due" value={tasksDue} />
+        <StatCard icon={PoundSterling} label="Pipeline Value" value={formatCurrency(pipelineValue)} />
+        <StatCard icon={CheckCircle} label="Tasks Due" value={tasksDue} subtext="Due today" />
       </div>
 
-      {/* Bottom Section - Activity + Sidebar */}
-      <div className="dashboard-bottom">
-        {/* Left Column - Activity & Meetings */}
-        <div className="flex flex-col gap-6">
+      {/* Main Content Grid */}
+      <div className="grid-main-aside">
+        {/* Left Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
           {/* Activity Feed */}
           <div className="card">
-            <div className="flex items-center gap-2 mb-4">
-              <Clock className="text-blue-400" size={20} />
-              <h2 className="text-white text-lg font-semibold">Recent Activity</h2>
+            <div className="page-header" style={{ marginBottom: 'var(--space-4)' }}>
+              <h2 className="page-title" style={{ fontSize: '16px' }}>Recent Activity</h2>
             </div>
-            {activities.slice(0, 5).map(activity => (
+            {activities.slice(0, 5).map((activity, i) => (
               <ActivityItem 
-                key={activity.id}
-                icon={FileText}
+                key={activity.id || i}
                 text={activity.description}
                 time={new Date(activity.timestamp).toLocaleDateString()}
               />
@@ -118,26 +108,35 @@ export default function Dashboard() {
 
           {/* Today's Meetings */}
           <div className="card">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="text-blue-400" size={20} />
-              <h2 className="text-white text-lg font-semibold">Today's Meetings</h2>
-              <span className="ml-auto text-slate-400 text-sm">{todaysMeetings.length}</span>
+            <div className="page-header" style={{ marginBottom: 'var(--space-4)' }}>
+              <h2 className="page-title" style={{ fontSize: '16px' }}>Today's Meetings</h2>
+              <span className="badge badge-blue">{todaysMeetings.length}</span>
             </div>
             {todaysMeetings.length === 0 ? (
-              <p className="text-slate-500 text-center py-4">No meetings today</p>
+              <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '24px' }}>
+                No meetings scheduled for today
+              </p>
             ) : (
               todaysMeetings.map(meeting => (
-                <div key={meeting.id} className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0">
-                  <div className="text-blue-400 text-sm font-medium min-w-[60px]">
+                <div key={meeting.id} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '16px', 
+                  padding: '12px 0',
+                  borderBottom: '1px solid var(--border)'
+                }}>
+                  <span style={{ color: 'var(--accent)', fontSize: '13px', fontWeight: 600, minWidth: '60px' }}>
                     {formatTime(meeting.time)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm truncate">{meeting.title}</p>
-                    <p className="text-slate-500 text-xs">with {getContact(meeting.contactId)}</p>
-                  </div>
-                  <span className="text-slate-400 text-xs bg-slate-700 px-2 py-1 rounded">
-                    {meeting.duration}m
                   </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ color: 'var(--text-primary)', fontSize: '14px', fontWeight: 500 }}>
+                      {meeting.title}
+                    </p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>
+                      with {getContact(meeting.contactId)}
+                    </p>
+                  </div>
+                  <span className="badge badge-gray">{meeting.duration}m</span>
                 </div>
               ))
             )}
@@ -145,12 +144,18 @@ export default function Dashboard() {
         </div>
 
         {/* Right Column - Quick Actions */}
-        <div className="card">
-          <h2 className="text-white text-lg font-semibold mb-4">Quick Actions</h2>
-          <div className="flex flex-col gap-3">
-            <ActionButton icon={Users} label="Add Contact" onClick={() => setShowContactModal(true)} />
-            <ActionButton icon={Briefcase} label="Add Deal" onClick={() => setShowDealModal(true)} />
-            <ActionButton icon={CheckCircle} label="Add Task" onClick={() => setShowTaskModal(true)} />
+        <div className="card" style={{ height: 'fit-content' }}>
+          <h2 className="page-title" style={{ fontSize: '16px', marginBottom: 'var(--space-4)' }}>Quick Actions</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <button className="btn btn-primary" onClick={() => setShowContactModal(true)}>
+              <Plus size={16} /> Add Contact
+            </button>
+            <button className="btn btn-ghost" onClick={() => setShowDealModal(true)}>
+              <Plus size={16} /> Add Deal
+            </button>
+            <button className="btn btn-ghost" onClick={() => setShowTaskModal(true)}>
+              <Plus size={16} /> Add Task
+            </button>
           </div>
         </div>
       </div>
