@@ -1,0 +1,71 @@
+/* Mission Control Dashboard Styles */
+/* Dark theme with glowing accents */
+
+:root {
+    --bg-color: #0a0a0f;
+    --bg-secondary: #12121a;
+    --accent-color: #ffffff;
+    --glow-working: #00ff88;
+    --glow-idle: #666666;
+    --glow-thinking: #ffaa00;
+    --glow-error: #ff4444;
+    --hub-glow: #00d4ff;
+    --line-color: #2a2a3a;
+    --text-primary: #e0e0e0;
+    --text-secondary: #888888;
+    --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono-font: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Agent State Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--glow-working); }
+    50% { opacity: 0.6; box-shadow: 0 0 15px var(--glow-working); }
+}
+
+@keyframes idle-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+@keyframes thinking {
+    0%, 100% { box-shadow: 0 0 5px var(--glow-thinking); }
+    25% { box-shadow: 0 0 20px var(--glow-thinking), 0 0 30px var(--glow-thinking); }
+    50% { box-shadow: 0 0 10px var(--glow-thinking); }
+    75% { box-shadow: 0 0 25px var(--glow-thinking); }
+}
+
+@keyframes error-flash {
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--glow-error); }
+    50% { opacity: 0.4; box-shadow: 0 0 30px var(--glow-error); }
+}
+
+@keyframes data-flow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -20; }
+}
+
+@keyframes hub-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+}
+
+/* State Classes */
+.status-working { animation: pulse 2s ease-in-out infinite; }
+.status-idle { animation: idle-pulse 3s ease-in-out infinite; }
+.status-thinking { animation: thinking 1.5s ease-in-out infinite; }
+.status-error { animation: error-flash 0.8s ease-in-out infinite; }

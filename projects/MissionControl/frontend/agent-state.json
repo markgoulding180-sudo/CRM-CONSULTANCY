@@ -1,0 +1,76 @@
+{
+  "timestamp": 1778212128.957746,
+  "updated": "2026-05-08T04:48:48.957746",
+  "agents": {
+    "qwen2.5-coder": {
+      "name": "qwen2.5-coder",
+      "model": "ollama/qwen2.5-coder:7b",
+      "status": "idle",
+      "task": "",
+      "project": "GB-Fantasy",
+      "progress": 0,
+      "last_active": "2026-04-26T19:02:25.844466",
+      "tasks_completed": 1
+    },
+    "phi3": {
+      "name": "phi3",
+      "model": "ollama/phi3",
+      "status": "idle",
+      "task": "",
+      "project": null,
+      "progress": 0,
+      "last_active": null,
+      "tasks_completed": 0
+    },
+    "gemma": {
+      "name": "gemma",
+      "model": "ollama/gemma",
+      "status": "idle",
+      "task": "",
+      "project": null,
+      "progress": 0,
+      "last_active": null,
+      "tasks_completed": 0
+    },
+    "gemma4:e4b": {
+      "name": "gemma4:e4b",
+      "model": "ollama/gemma4:e4b",
+      "status": "idle",
+      "task": "",
+      "project": null,
+      "progress": 0,
+      "last_active": null,
+      "tasks_completed": 0
+    },
+    "llama3": {
+      "name": "llama3",
+      "model": "ollama/llama3",
+      "status": "idle",
+      "task": "",
+      "project": null,
+      "progress": 0,
+      "last_active": null,
+      "tasks_completed": 0
+    },
+    "HAL-9000": {
+      "name": "HAL-9000",
+      "model": "HAL 9000",
+      "status": "idle",
+      "task": "",
+      "project": "TestRun",
+      "progress": 0,
+      "last_active": "2026-04-26T18:23:24.752201",
+      "tasks_completed": 1
+    }
+  },
+  "projects": {
+    "World-Cup-LMS": {
+      "name": "World-Cup-LMS",
+      "progress": 75,
+      "agents": 1,
+      "tasks": 8,
+      "status": "active",
+      "updated": "2026-05-08T04:48:48.957727"
+    }
+  }
+}
